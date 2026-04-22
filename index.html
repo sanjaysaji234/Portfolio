@@ -1,229 +1,868 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanjay Saji | Game Programmer Portfolio</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sanjay Saji | Game Programmer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #060810;
+      --card: #0d1117;
+      --card2: #111827;
+      --border: #1e293b;
+      --neon: #00ff88;
+      --neon2: #ff3b6b;
+      --neon3: #00d4ff;
+      --orange: #ff6b35;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --pixel: 'Press Start 2P', monospace;
+      --orb: 'Orbitron', sans-serif;
+      --mono: 'Share Tech Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    .cursor {
+      position: fixed; top: 0; left: 0; width: 12px; height: 12px;
+      background: var(--neon); border-radius: 0;
+      pointer-events: none; z-index: 9999;
+      transition: transform 0.1s, background 0.2s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      position: fixed; top: 0; left: 0; width: 32px; height: 32px;
+      border: 1px solid var(--neon3); border-radius: 0;
+      pointer-events: none; z-index: 9998;
+      transition: transform 0.15s, border-color 0.2s;
+      mix-blend-mode: screen;
+    }
+
+    /* ── SCANLINES OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,255,136,0.015) 2px,
+        rgba(0,255,136,0.015) 4px
+      );
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9989; pointer-events: none;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* ── GRID BACKGROUND ── */
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ── LAYOUT ── */
+    .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* ── BENTO GRID ── */
+    .bento { display: grid; gap: 12px; }
+
+    .bento-top {
+      grid-template-columns: 220px 1fr 200px;
+      grid-template-rows: auto;
+    }
+
+    .bento-mid {
+      grid-template-columns: 1fr 1fr;
+      margin-top: 0;
+    }
+
+    .bento-proj {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .bento-bottom {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .card:hover { border-color: var(--neon); transform: translateY(-2px); }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-neon2::before { background: linear-gradient(90deg, transparent, var(--neon2), transparent); }
+    .card-neon2:hover { border-color: var(--neon2); }
+    .card-neon3::before { background: linear-gradient(90deg, transparent, var(--neon3), transparent); }
+    .card-neon3:hover { border-color: var(--neon3); }
+    .card-orange::before { background: linear-gradient(90deg, transparent, var(--orange), transparent); }
+    .card-orange:hover { border-color: var(--orange); }
+
+    /* ── PROFILE CARD ── */
+    .profile-card {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; text-align: center;
+      background: var(--card);
+    }
+    .avatar-wrap {
+      position: relative; width: 110px; height: 110px;
+    }
+    .avatar-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover; border-radius: 2px;
+      filter: grayscale(20%) contrast(1.1);
+      border: 2px solid var(--neon);
+    }
+    .avatar-corner {
+      position: absolute; width: 10px; height: 10px;
+      border-color: var(--neon2); border-style: solid;
+    }
+    .avatar-corner.tl { top: -4px; left: -4px; border-width: 2px 0 0 2px; }
+    .avatar-corner.tr { top: -4px; right: -4px; border-width: 2px 2px 0 0; }
+    .avatar-corner.bl { bottom: -4px; left: -4px; border-width: 0 0 2px 2px; }
+    .avatar-corner.br { bottom: -4px; right: -4px; border-width: 0 2px 2px 0; }
+
+    .profile-name {
+      font-family: var(--orb);
+      font-size: 14px; font-weight: 900;
+      color: #fff; letter-spacing: 0.05em;
+    }
+    .profile-role {
+      font-family: var(--pixel);
+      font-size: 6px; color: var(--neon);
+      letter-spacing: 0.1em; line-height: 1.8;
+    }
+
+    /* ── TITLE CARD ── */
+    .title-card {
+      display: flex; flex-direction: column;
+      justify-content: center; padding: 28px 32px;
+      background: linear-gradient(135deg, var(--card) 0%, #0a0f1a 100%);
+    }
+    .title-eyebrow {
+      font-family: var(--pixel); font-size: 7px;
+      color: var(--neon3); letter-spacing: 0.15em;
+      margin-bottom: 10px;
+    }
+    .title-main {
+      font-family: var(--orb); font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 900; line-height: 1.1;
+      color: #fff; text-transform: uppercase;
+    }
+    .title-main span { color: var(--neon); }
+    .title-sub {
+      font-size: 13px; color: var(--muted);
+      margin-top: 10px; line-height: 1.6;
+    }
+    .title-cta { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn {
+      font-family: var(--pixel); font-size: 7px;
+      padding: 10px 16px; border-radius: 2px;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s; display: inline-block;
+      letter-spacing: 0.05em;
+    }
+    .btn-primary { background: var(--neon); color: #000; border: none; }
+    .btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon); }
+    .btn-outline { background: transparent; color: var(--neon2); border: 1px solid var(--neon2); }
+    .btn-outline:hover { background: var(--neon2); color: #fff; box-shadow: 0 0 20px var(--neon2); }
+
+    /* ── LINKS CARD ── */
+    .links-card { display: flex; flex-direction: column; gap: 8px; }
+    .link-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border: 1px solid var(--border);
+      border-radius: 2px; text-decoration: none;
+      font-size: 11px; color: var(--muted);
+      transition: all 0.2s;
+    }
+    .link-item:hover { border-color: var(--neon3); color: var(--neon3); background: rgba(0,212,255,0.05); }
+    .link-item svg { flex-shrink: 0; }
+    .links-label {
+      font-family: var(--pixel); font-size: 7px;
+      color: var(--neon3); margin-bottom: 8px; display: block;
+    }
+
+    /* ── ABOUT CARD ── */
+    .about-card {
+      background: linear-gradient(135deg, #0d1117 0%, #0a1628 100%);
+      position: relative;
+    }
+    .about-tag {
+      font-family: var(--pixel); font-size: 7px;
+      color: var(--neon2); letter-spacing: 0.1em; margin-bottom: 12px;
+      display: block;
+    }
+    .about-headline {
+      font-family: var(--orb); font-size: clamp(22px, 3vw, 32px);
+      font-weight: 900; color: #fff; line-height: 1.1;
+      margin-bottom: 16px; text-transform: uppercase;
+    }
+    .about-text { font-size: 13px; color: #94a3b8; line-height: 1.8; }
+    .about-mascot {
+      position: absolute; bottom: 20px; right: 20px;
+      font-size: 52px; opacity: 0.15;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    /* ── SKILLS CARD ── */
+    .skills-tag-label {
+      font-family: var(--pixel); font-size: 7px;
+      color: var(--neon); display: block; margin-bottom: 12px;
+      letter-spacing: 0.1em;
+    }
+    .skills-heading {
+      font-family: var(--orb); font-size: 28px; font-weight: 900;
+      color: #fff; margin-bottom: 16px; text-transform: uppercase;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      padding: 6px 14px; border-radius: 2px; font-size: 11px;
+      font-family: var(--mono); letter-spacing: 0.05em;
+      border: 1px solid; cursor: default;
+      transition: all 0.2s;
+    }
+    .tag:hover { transform: translateY(-2px); }
+    .tag-green { color: var(--neon); border-color: rgba(0,255,136,0.4); background: rgba(0,255,136,0.05); }
+    .tag-green:hover { background: rgba(0,255,136,0.15); box-shadow: 0 0 10px rgba(0,255,136,0.2); }
+    .tag-pink { color: var(--neon2); border-color: rgba(255,59,107,0.4); background: rgba(255,59,107,0.05); }
+    .tag-pink:hover { background: rgba(255,59,107,0.15); }
+    .tag-blue { color: var(--neon3); border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.05); }
+    .tag-blue:hover { background: rgba(0,212,255,0.15); }
+    .tag-orange { color: var(--orange); border-color: rgba(255,107,53,0.4); background: rgba(255,107,53,0.05); }
+    .tag-orange:hover { background: rgba(255,107,53,0.15); }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      font-family: var(--pixel); font-size: clamp(14px, 2.5vw, 22px);
+      color: #fff; padding: 20px 0 4px;
+      display: flex; align-items: center; gap: 14px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .section-heading::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--neon), transparent);
+    }
+    .section-num {
+      font-family: var(--pixel); font-size: 10px; color: var(--neon); opacity: 0.5;
+    }
+
+    /* ── PROJECT CARD ── */
+    .project-card { cursor: pointer; }
+    .proj-img {
+      width: 100%; height: 160px; object-fit: cover;
+      border-radius: 2px; margin-bottom: 14px;
+      filter: saturate(0.8) contrast(1.1);
+      transition: filter 0.3s, transform 0.3s;
+      display: block;
+    }
+    .project-card:hover .proj-img { filter: saturate(1.2) contrast(1.1); }
+    .proj-title {
+      font-family: var(--orb); font-size: 16px; font-weight: 700;
+      color: #fff; margin-bottom: 6px;
+      transition: color 0.2s;
+    }
+    .project-card:hover .proj-title { color: var(--neon); }
+    .proj-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .proj-play {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--pixel); font-size: 7px;
+      color: var(--neon2); letter-spacing: 0.05em;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .project-card:hover .proj-play { opacity: 1; }
+
+    /* ── EXPERIENCE CARD ── */
+    .exp-logo {
+      font-family: var(--orb); font-size: 22px; font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .exp-role { font-family: var(--orb); font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .exp-company { font-size: 12px; color: var(--neon3); margin-bottom: 2px; }
+    .exp-date { font-family: var(--pixel); font-size: 7px; color: var(--muted); margin-bottom: 12px; }
+    .exp-list { padding-left: 0; list-style: none; }
+    .exp-list li {
+      font-size: 12px; color: #94a3b8; line-height: 1.6;
+      padding: 3px 0 3px 14px; position: relative;
+    }
+    .exp-list li::before { content: '▸'; position: absolute; left: 0; color: var(--neon); }
+
+    /* ── TOOLS CARD ── */
+    .tools-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+    /* ── LANG BARS ── */
+    .lang-item { margin-bottom: 16px; }
+    .lang-name { font-family: var(--orb); font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .lang-label { font-family: var(--pixel); font-size: 7px; color: var(--muted); margin-bottom: 6px; display: block; }
+    .lang-bar { height: 8px; background: var(--border); border-radius: 0; overflow: hidden; }
+    .lang-fill {
+      height: 100%; background: linear-gradient(90deg, var(--neon), var(--neon3));
+      border-radius: 0;
+      animation: fillBar 1.5s ease-out both;
+    }
+    @keyframes fillBar {
+      from { width: 0; }
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(6px); z-index: 1000;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--card); border: 1px solid var(--neon);
+      border-radius: 4px; max-width: 800px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s;
+      box-shadow: 0 0 60px rgba(0,255,136,0.15);
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; background: var(--card); z-index: 10;
+    }
+    .modal-title { font-family: var(--orb); font-size: 20px; font-weight: 700; color: #fff; }
+    .modal-close {
+      width: 32px; height: 32px; border: 1px solid var(--border);
+      background: none; color: var(--muted); font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; border-radius: 2px;
+    }
+    .modal-close:hover { border-color: var(--neon2); color: var(--neon2); }
+    .modal-body { padding: 24px; }
+    .modal-video { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 2px; margin-bottom: 20px; }
+
+    /* ── GLITCH EFFECT ── */
+    .glitch {
+      position: relative; display: inline-block;
+    }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .glitch::before {
+      color: var(--neon2); left: 2px;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+      animation: glitch1 3s infinite;
+    }
+    .glitch::after {
+      color: var(--neon3); left: -2px;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+      animation: glitch2 3s infinite;
+    }
+    @keyframes glitch1 {
+      0%, 90%, 100% { transform: translate(0); opacity: 0; }
+      91% { transform: translate(3px, -1px); opacity: 0.8; }
+      93% { transform: translate(-2px, 1px); opacity: 0.8; }
+      95% { transform: translate(0); opacity: 0; }
+    }
+    @keyframes glitch2 {
+      0%, 92%, 100% { transform: translate(0); opacity: 0; }
+      93% { transform: translate(-3px, 1px); opacity: 0.8; }
+      95% { transform: translate(2px, -1px); opacity: 0.8; }
+      97% { transform: translate(0); opacity: 0; }
+    }
+
+    /* ── FLOAT ── */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* ── BLINK ── */
+    .blink { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── FADE IN UP ── */
+    .fade-up {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── TYPEWRITER ── */
+    .typewriter {
+      overflow: hidden; white-space: nowrap;
+      border-right: 2px solid var(--neon);
+      animation: typing 2.5s steps(30) 0.5s both, blink-cursor 0.75s step-end infinite 3s;
+    }
+    @keyframes typing { from { width: 0; } to { width: 100%; } }
+    @keyframes blink-cursor { 50% { border-color: transparent; } }
+
+    /* ── STAT BOXES ── */
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+    .stat-box { padding: 12px; border: 1px solid var(--border); text-align: center; border-radius: 2px; }
+    .stat-num { font-family: var(--orb); font-size: 22px; font-weight: 900; color: var(--neon); }
+    .stat-label { font-family: var(--pixel); font-size: 6px; color: var(--muted); margin-top: 4px; display: block; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 500;
+      background: rgba(6,8,16,0.85); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      height: 56px;
+    }
+    .nav-logo {
+      font-family: var(--pixel); font-size: 9px; color: var(--neon);
+      letter-spacing: 0.1em;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      font-family: var(--pixel); font-size: 7px;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.2s; letter-spacing: 0.1em;
+    }
+    .nav-links a:hover { color: var(--neon); }
+    .nav-status {
+      display: flex; align-items: center; gap: 6px;
+      font-family: var(--pixel); font-size: 7px; color: var(--neon);
+    }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--neon); animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.5); }
+      50% { box-shadow: 0 0 0 6px rgba(0,255,136,0); }
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--neon); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .bento-top, .bento-mid, .bento-proj, .bento-bottom {
+        grid-template-columns: 1fr;
+      }
+      .stats { grid-template-columns: repeat(3, 1fr); }
+      .nav-status { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-        // Icons
-        const ExternalLink = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>;
-        const Play = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>;
-        const Github = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>;
-        const Linkedin = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>;
-        const Mail = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>;
-        const X = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
-        const Gamepad = ({className}) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line></svg>;
 
-        function CVPortfolio() {
-          const [selectedProject, setSelectedProject] = React.useState(null);
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grid-bg"></div>
 
-          const projects = [
-            {
-              id: 1,
-              title: "ProtoBoat",
-              screenshot: "./Images/Screenshot 2025-10-26 151335.png",
-              description: "An endless runner mobile game that challenges players to dodge obstacles while navigating through dynamic environments.",
-              technologies: ["Unity", "C#", "Mobile Optimization"],
-              demoVideo: "https://www.youtube.com/embed/SnNk1iygLjM",
-              link: "https://github.com/sanjaysaji234/protobot3d"
-            },
-            {
-              id: 2,
-              title: "Fantasy Game Demo",
-              screenshot: "./Images/Screenshot 2026-03-29 222347.png",
-              description: "A 2.5D side-scroller adventure combining platforming mechanics, puzzle-solving, and real-time combat.",
-              technologies: ["Unity", "C#", "AI Systems", "Blender"],
-              demoVideo: "https://www.youtube.com/embed/WAqVa_OvOJM",
-              link: "https://github.com/sanjaysaji234/Fantasy"
-            },
-            {
-              id: 3,
-              title: "Ecosystem",
-              screenshot: "./Images/Screenshot 2026-03-23 221950.png",
-              description: "A procedurally generated ecosystem simulation where animal AIs thrive using A* pathfinding and behavior trees.",
-              technologies: ["Unity", "C#", "A* Pathfinding", "Procedural Generation"],
-              demoVideo: "https://www.youtube.com/embed/Lpu6d_93vY0",
-              link: "https://github.com/sanjaysaji234/Eco"
-            },
-            {
-              id: 4,
-              title: "Frogo Grabo (Itch.io)",
-              screenshot: "./Images/Gemini_Generated_Image_69rtl069rtl069rt.png",
-              description: "A fast-paced 2D pixel art endless side-scroller developed for a two-week itch.io GameJam. Features a unique grappling mechanic where players use the frog's tongue to reel in and eliminate enemies while navigating hazardous terrain.",
-              technologies: ["Unity", "WebGL", "C#"],
-              gameUrl: "https://itch.io/embed-upload/17098104?color=333333", 
-              link: "https://github.com/sanjaysaji234/FrogoGrabo"
-            }
-          ];
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">&gt; SS.EXE</span>
+    <div class="nav-links">
+      <a href="#intro">INIT</a>
+      <a href="#projects">PROJECTS</a>
+      <a href="#experience">EXP</a>
+      <a href="#tools">TOOLS</a>
+    </div>
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      AVAILABLE
+    </div>
+  </div>
+</nav>
 
-          const socials = [
-            { icon: Github, label: "GitHub", url: "https://github.com/sanjaysaji234" },
-            { icon: Linkedin, label: "LinkedIn", url: "https://www.linkedin.com/in/sanjay-saji-986003301/" },
-            { icon: Mail, label: "Email", url: "mailto:sanjaysaji393@gmail.com" },
-            { icon: X, label: "Twitter", url: "https://x.com/SanjaySaji50193" }
-          ];
+<div class="page" style="padding-top: 80px;">
 
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
-              <nav className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-700/50">
-                <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-                  <div className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">Portfolio</div>
-                  <div className="flex gap-8">
-                    <a href="#intro" className="text-slate-300 hover:text-white transition">Intro</a>
-                    <a href="#projects" className="text-slate-300 hover:text-white transition">Projects</a>
-                    <a href="#socials" className="text-slate-300 hover:text-white transition">Connect</a>
-                  </div>
-                </div>
-              </nav>
+  <!-- TOP ROW -->
+  <div class="bento bento-top fade-up" id="intro">
 
-              <section id="intro" className="min-h-screen flex items-center justify-center px-6 pt-20">
-                <div className="max-w-4xl mx-auto text-center">
-                  <div className="mb-8 animate-fade-in">
-                    <div className="w-32 h-32 mx-auto mb-8 rounded-full bg-gradient-to-br from-orange-400 to-red-400 p-1">
-                      <img src="./Images/IMG_2233.JPG.jpeg" alt="Profile" className="w-full h-full rounded-full object-cover bg-slate-900" />
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Sanjay Saji</h2>
-                  </div>
-                  <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                    <span className="bg-gradient-to-r from-orange-400 via-red-400 to-pink-400 bg-clip-text text-transparent">Game Programmer</span>
-                  </h1>
-                  <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                    Engineering student and Game Programmer building a strong foundation in C# and Unity. Turning ideas into playable experiences.
-                  </p>
-                  <div className="flex gap-4 justify-center flex-wrap">
-                    <a href="#projects" className="inline-flex items-center justify-center px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold transition transform hover:scale-105">View My Work</a>
-                    <a href="./Resume.pdf" target="_blank" className="inline-flex items-center justify-center px-8 py-3 border border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white rounded-lg font-semibold transition transform hover:scale-105">View Resume</a>
-                  </div>
-                </div>
-              </section>
+    <!-- Profile -->
+    <div class="card profile-card">
+      <div class="avatar-wrap">
+        <img src="./Images/IMG_2233.JPG.jpeg" alt="Sanjay Saji" />
+        <div class="avatar-corner tl"></div>
+        <div class="avatar-corner tr"></div>
+        <div class="avatar-corner bl"></div>
+        <div class="avatar-corner br"></div>
+      </div>
+      <div class="profile-name">SANJAY SAJI</div>
+      <div class="profile-role">GAME<br>PROGRAMMER<span class="blink">_</span></div>
+      <div class="stats" style="margin-top: 10px;">
+        <div class="stat-box"><div class="stat-num">4+</div><span class="stat-label">GAMES</span></div>
+        <div class="stat-box"><div class="stat-num">2+</div><span class="stat-label">YEARS</span></div>
+        <div class="stat-box"><div class="stat-num">C#</div><span class="stat-label">MAIN</span></div>
+      </div>
+    </div>
 
-              <section id="projects" className="py-24 px-6 bg-gradient-to-b from-transparent to-slate-900/50">
-                <div className="max-w-6xl mx-auto">
-                  
-                  {/* UPDATED HEADER AREA */}
-                  <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-                    <div>
-                      <h2 className="text-5xl font-bold mb-4 text-white">Featured Projects</h2>
-                      <p className="text-slate-400 text-lg">Click a project to watch a demo or play the game build.</p>
-                    </div>
-                    <a 
-                      href="https://s-njay.itch.io/" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-[#fa5c5c] hover:bg-[#e34949] text-white rounded-xl font-bold transition transform hover:scale-105 shadow-lg shadow-[#fa5c5c]/20"
-                    >
-                      <Gamepad className="w-5 h-5" /> 
-                      My Itch.io Profile
-                    </a>
-                  </div>
-                  {/* END UPDATED HEADER AREA */}
+    <!-- Title -->
+    <div class="card title-card">
+      <span class="title-eyebrow">// PLAYER ONE HAS ENTERED THE GAME</span>
+      <h1 class="title-main">
+        <span class="glitch" data-text="GAME">GAME</span><br>
+        PROGRAMMER
+      </h1>
+      <p class="title-sub typewriter">Engineering student. Unity & C# developer. Turning ideas into playable worlds.</p>
+      <div class="title-cta">
+        <a href="#projects" class="btn btn-primary">▶ VIEW PROJECTS</a>
+        <a href="./Resume.pdf" target="_blank" class="btn btn-outline">⬇ RESUME.PDF</a>
+      </div>
+    </div>
 
-                  <div className="grid md:grid-cols-2 gap-8">
-                    {projects.map((project) => (
-                      <div key={project.id} onClick={() => setSelectedProject(project)} className="group cursor-pointer">
-                        <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-0 border border-slate-700 hover:border-orange-400/50 transition-all duration-300 h-full transform hover:scale-105 overflow-hidden">
-                          <div className="relative w-full h-48 overflow-hidden bg-black">
-                            <img src={project.screenshot} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
-                          </div>
-                          <div className="p-8 relative z-10">
-                            <div className="flex items-start justify-between mb-4">
-                              <h3 className="text-2xl font-bold text-white group-hover:text-orange-300 transition">{project.title}</h3>
-                              <Play className="w-6 h-6 text-orange-400 opacity-0 group-hover:opacity-100 transition transform group-hover:scale-110" />
-                            </div>
-                            <p className="text-slate-400 mb-6 leading-relaxed">{project.description}</p>
-                            <div className="flex flex-wrap gap-2">
-                              {project.technologies.map(tech => (
-                                <span key={tech} className="px-3 py-1 bg-slate-700/50 rounded-full text-slate-300 text-xs border border-slate-600">{tech}</span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </section>
+    <!-- Links -->
+    <div class="card links-card card-neon3">
+      <span class="links-label">// CONNECT</span>
+      <a href="https://github.com/sanjaysaji234" target="_blank" class="link-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        github.com/sanjaysaji234
+      </a>
+      <a href="https://www.linkedin.com/in/sanjay-saji-986003301/" target="_blank" class="link-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+        LinkedIn
+      </a>
+      <a href="https://s-njay.itch.io/" target="_blank" class="link-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"></rect><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line></svg>
+        s-njay.itch.io
+      </a>
+      <a href="mailto:sanjaysaji393@gmail.com" class="link-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        sanjaysaji393@gmail.com
+      </a>
+      <a href="https://x.com/SanjaySaji50193" target="_blank" class="link-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg>
+        @SanjaySaji50193
+      </a>
+    </div>
+  </div>
 
-              <section id="socials" className="py-24 px-6">
-                <div className="max-w-6xl mx-auto text-center">
-                  <h2 className="text-5xl font-bold mb-16 text-white">Let's Connect</h2>
-                  <div className="flex justify-center gap-6 mb-16 flex-wrap">
-                    {socials.map(social => {
-                      const Icon = social.icon;
-                      return (
-                        <a key={social.label} href={social.url} target="_blank" className="group">
-                          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-red-400 p-0.5 transform hover:scale-110 transition">
-                            <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center group-hover:bg-slate-800 transition">
-                              <Icon className="w-7 h-7 text-orange-400 group-hover:text-orange-300" />
-                            </div>
-                          </div>
-                          <p className="text-slate-300 mt-3 text-sm">{social.label}</p>
-                        </a>
-                      );
-                    })}
-                  </div>
-                </div>
-              </section>
+  <!-- MID ROW: About + Skills -->
+  <div class="bento bento-mid" style="margin-top: 12px;">
 
-              {selectedProject && (
-                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" onClick={() => setSelectedProject(null)}>
-                  <div className="bg-slate-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-slate-700" onClick={e => e.stopPropagation()}>
-                    <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 flex justify-between items-center z-20">
-                      <h3 className="text-3xl font-bold text-white">{selectedProject.title}</h3>
-                      <button onClick={() => setSelectedProject(null)} className="text-slate-400 hover:text-white text-3xl">×</button>
-                    </div>
-                    <div className="p-8">
-                      <div className="mb-8 aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-slate-700">
-                        {selectedProject.gameUrl ? (
-                          <iframe src={selectedProject.gameUrl} className="w-full h-full border-0" allowFullScreen></iframe>
-                        ) : (
-                          <iframe width="100%" height="100%" src={selectedProject.demoVideo} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-                        )}
-                      </div>
-                      <div className="grid md:grid-cols-3 gap-8">
-                        <div className="md:col-span-2">
-                          <h4 className="text-xl font-semibold text-white mb-3">About the Project</h4>
-                          <p className="text-slate-300 leading-relaxed mb-6">{selectedProject.description}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {selectedProject.technologies.map(tech => (
-                              <span key={tech} className="px-4 py-2 bg-orange-500/10 border border-orange-400/30 rounded-lg text-orange-300 text-sm font-medium">{tech}</span>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-4">
-                          <a href={selectedProject.link} target="_blank" className="flex items-center justify-center gap-2 px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition">
-                            <Github className="w-5 h-5" /> View Source
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+    <div class="card about-card card-neon2 fade-up">
+      <span class="about-tag">// PLAYER PROFILE</span>
+      <h2 class="about-headline">HELLO<br>WORLD!</h2>
+      <p class="about-text">
+        I'm Sanjay — an engineering student and self-driven game programmer who builds playable experiences from scratch. I dive deep into <strong style="color:#fff">C# and Unity</strong>, crafting everything from procedural ecosystems to polished 2D/3D game mechanics.<br><br>
+        Passionate about AI systems, physics simulations, and making games that actually <em style="color: var(--neon)">feel</em> great to play. Let's build something unforgettable.
+      </p>
+      <div class="about-mascot">🎮</div>
+    </div>
 
-              <footer className="border-t border-slate-700 bg-slate-950 py-8 text-center text-slate-400 text-sm">
-                <p>© 2026 Portfolio | Sanjay Saji | Built with React & Tailwind</p>
-              </footer>
+    <div class="card fade-up">
+      <span class="skills-tag-label">// MY SUPER POWERS</span>
+      <h2 class="skills-heading">SKILLS</h2>
+      <div class="tags">
+        <span class="tag tag-green">C#</span>
+        <span class="tag tag-green">Unity Engine</span>
+        <span class="tag tag-blue">A* Pathfinding</span>
+        <span class="tag tag-blue">AI Systems</span>
+        <span class="tag tag-pink">Procedural Gen</span>
+        <span class="tag tag-pink">Physics</span>
+        <span class="tag tag-orange">Mobile Dev</span>
+        <span class="tag tag-orange">WebGL</span>
+        <span class="tag tag-green">Game Design</span>
+        <span class="tag tag-blue">Blender</span>
+        <span class="tag tag-pink">Behavior Trees</span>
+        <span class="tag tag-orange">UI/UX</span>
+      </div>
 
-              <style>{`
-                @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                .animate-fade-in { animation: fade-in 0.3s ease-out; }
-                html { scroll-behavior: smooth; }
-              `}</style>
-            </div>
-          );
-        }
+      <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <span class="skills-tag-label">// EDUCATION</span>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size: 28px; opacity: 0.7;">🎓</div>
+          <div>
+            <div style="font-family: var(--orb); font-size: 13px; font-weight: 700; color: #fff;">B.E. Engineering</div>
+            <div style="font-size: 11px; color: var(--neon3); margin-top: 2px;">Currently Enrolled · Game Programming Focus</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<CVPortfolio />);
-    </script>
+  <!-- PROJECTS -->
+  <div class="section-heading fade-up" id="projects">
+    <span class="section-num">02</span>
+    FEATURED PROJECTS
+  </div>
+
+  <div class="bento bento-proj" style="margin-top: 8px;">
+
+    <div class="card project-card card-neon2 fade-up" onclick="openModal('protoboat')">
+      <img class="proj-img" src="./Images/Screenshot 2025-10-26 151335.png" alt="ProtoBoat" />
+      <div class="proj-title">ProtoBoat</div>
+      <p class="proj-desc">An endless runner mobile game — dodge obstacles, navigate dynamic environments, survive as long as you can.</p>
+      <div class="tags" style="margin-bottom: 12px;">
+        <span class="tag tag-green">Unity</span>
+        <span class="tag tag-blue">C#</span>
+        <span class="tag tag-orange">Mobile</span>
+      </div>
+      <span class="proj-play">▶ WATCH DEMO</span>
+    </div>
+
+    <div class="card project-card card-neon3 fade-up" onclick="openModal('fantasy')">
+      <img class="proj-img" src="./Images/Screenshot 2026-03-29 222347.png" alt="Fantasy Game Demo" />
+      <div class="proj-title">Fantasy Game Demo</div>
+      <p class="proj-desc">A 2.5D side-scroller with real-time combat, puzzle mechanics, and hand-crafted AI enemies.</p>
+      <div class="tags" style="margin-bottom: 12px;">
+        <span class="tag tag-green">Unity</span>
+        <span class="tag tag-blue">AI Systems</span>
+        <span class="tag tag-pink">Blender</span>
+      </div>
+      <span class="proj-play">▶ WATCH DEMO</span>
+    </div>
+
+    <div class="card project-card card-orange fade-up" onclick="openModal('ecosystem')">
+      <img class="proj-img" src="./Images/Screenshot 2026-03-23 221950.png" alt="Ecosystem" />
+      <div class="proj-title">Ecosystem Sim</div>
+      <p class="proj-desc">Procedurally generated world where animal AIs survive using A* pathfinding and behavior trees.</p>
+      <div class="tags" style="margin-bottom: 12px;">
+        <span class="tag tag-green">Unity</span>
+        <span class="tag tag-blue">A* Pathfinding</span>
+        <span class="tag tag-pink">Proc Gen</span>
+      </div>
+      <span class="proj-play">▶ WATCH DEMO</span>
+    </div>
+
+    <div class="card project-card fade-up" onclick="openModal('frogo')">
+      <img class="proj-img" src="./Images/Gemini_Generated_Image_69rtl069rtl069rt.png" alt="Frogo Grabo" />
+      <div class="proj-title">Frogo Grabo</div>
+      <p class="proj-desc">2D pixel endless runner built for a GameJam. Grapple enemies with a frog tongue across hazardous terrain.</p>
+      <div class="tags" style="margin-bottom: 12px;">
+        <span class="tag tag-green">Unity</span>
+        <span class="tag tag-blue">WebGL</span>
+        <span class="tag tag-orange">GameJam</span>
+      </div>
+      <span class="proj-play">▶ PLAY NOW</span>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div class="section-heading fade-up" id="experience">
+    <span class="section-num">03</span>
+    GAME DEV JOURNEY
+  </div>
+
+  <div class="bento" style="grid-template-columns: repeat(3,1fr); margin-top: 8px;">
+    <div class="card card-neon2 fade-up">
+      <div class="exp-logo" style="color: var(--neon2);">✦</div>
+      <div class="exp-role">Solo Developer</div>
+      <div class="exp-company">Personal Projects</div>
+      <div class="exp-date">2023 / PRESENT</div>
+      <ul class="exp-list">
+        <li>Designed & shipped 4 complete game prototypes</li>
+        <li>Published on Itch.io with live WebGL builds</li>
+        <li>Self-taught advanced Unity systems (AI, physics, shaders)</li>
+        <li>Competed in game jams under time pressure</li>
+      </ul>
+    </div>
+    <div class="card card-neon3 fade-up">
+      <div class="exp-logo" style="color: var(--neon3);">⚡</div>
+      <div class="exp-role">Engineering Student</div>
+      <div class="exp-company">University</div>
+      <div class="exp-date">2022 / PRESENT</div>
+      <ul class="exp-list">
+        <li>Strong foundation in algorithms & data structures</li>
+        <li>Applied A* pathfinding to game AI systems</li>
+        <li>Built procedural generation systems for coursework</li>
+        <li>Collaborated on team software projects</li>
+      </ul>
+    </div>
+    <div class="card card-orange fade-up">
+      <div class="exp-logo" style="color: var(--orange);">🎮</div>
+      <div class="exp-role">Game Jam Participant</div>
+      <div class="exp-company">Itch.io GameJams</div>
+      <div class="exp-date">2024 / PRESENT</div>
+      <ul class="exp-list">
+        <li>Frogo Grabo shipped in 2 weeks</li>
+        <li>Full game loop design under constraints</li>
+        <li>Optimized for WebGL browser play</li>
+        <li>Community feedback & iteration cycles</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TOOLS + LANGUAGES -->
+  <div class="section-heading fade-up" id="tools">
+    <span class="section-num">04</span>
+    TOOLKIT
+  </div>
+
+  <div class="bento bento-bottom" style="margin-top: 8px;">
+    <div class="card fade-up">
+      <span class="skills-tag-label">// SOFTWARES &amp; ENGINES</span>
+      <div class="tools-grid">
+        <span class="tag tag-green">Unity</span>
+        <span class="tag tag-blue">Visual Studio</span>
+        <span class="tag tag-pink">Blender</span>
+        <span class="tag tag-orange">Git / GitHub</span>
+        <span class="tag tag-green">Rider</span>
+        <span class="tag tag-blue">VS Code</span>
+        <span class="tag tag-pink">Figma</span>
+        <span class="tag tag-orange">Aseprite</span>
+        <span class="tag tag-green">Audacity</span>
+      </div>
+    </div>
+    <div class="card card-neon3 fade-up">
+      <span class="skills-tag-label">// LANGUAGES / PROFICIENCY</span>
+      <div class="lang-item">
+        <div class="lang-name">C#</div>
+        <span class="lang-label">PRIMARY LANGUAGE</span>
+        <div class="lang-bar"><div class="lang-fill" style="width: 90%"></div></div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Unity Shader Graph</div>
+        <span class="lang-label">INTERMEDIATE</span>
+        <div class="lang-bar"><div class="lang-fill" style="width: 65%; animation-delay: 0.2s"></div></div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Python</div>
+        <span class="lang-label">LEARNING</span>
+        <div class="lang-bar"><div class="lang-fill" style="width: 45%; animation-delay: 0.4s"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer style="text-align:center; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border);">
+    <p style="font-family: var(--pixel); font-size: 8px; color: var(--muted); letter-spacing: 0.1em;">
+      © 2026 SANJAY SAJI · GAME PROGRAMMER · BUILT WITH &lt;3 &amp; C#<span class="blink">_</span>
+    </p>
+  </footer>
+
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title"></span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-media"></div>
+      <p id="modal-desc" style="font-size: 13px; color: #94a3b8; line-height: 1.8; margin-bottom: 16px;"></p>
+      <div id="modal-tags" class="tags" style="margin-bottom: 16px;"></div>
+      <a id="modal-link" href="#" target="_blank" class="btn btn-outline" style="font-size: 7px;">⬡ VIEW ON GITHUB</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cursor.style.transform = `translate(${mx-6}px, ${my-6}px)`;
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx-16}px, ${ry-16}px)`;
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, button, .project-card, .tag').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform += ' scale(2)'; ring.style.borderColor = '#ff3b6b'; });
+    el.addEventListener('mouseleave', () => { ring.style.borderColor = '#00d4ff'; });
+  });
+
+  // Scroll animations
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+  // Projects data
+  const projects = {
+    protoboat: {
+      title: 'ProtoBoat',
+      media: '<iframe class="modal-video" src="https://www.youtube.com/embed/SnNk1iygLjM" allowfullscreen></iframe>',
+      desc: 'An endless runner mobile game that challenges players to dodge obstacles while navigating through dynamic environments. Built with mobile performance optimization in mind.',
+      tags: ['Unity', 'C#', 'Mobile Optimization'],
+      link: 'https://github.com/sanjaysaji234/protobot3d'
+    },
+    fantasy: {
+      title: 'Fantasy Game Demo',
+      media: '<iframe class="modal-video" src="https://www.youtube.com/embed/WAqVa_OvOJM" allowfullscreen></iframe>',
+      desc: 'A 2.5D side-scroller adventure combining platforming mechanics, puzzle-solving, and real-time combat with custom AI enemy behavior systems.',
+      tags: ['Unity', 'C#', 'AI Systems', 'Blender'],
+      link: 'https://github.com/sanjaysaji234/Fantasy'
+    },
+    ecosystem: {
+      title: 'Ecosystem Simulation',
+      media: '<iframe class="modal-video" src="https://www.youtube.com/embed/Lpu6d_93vY0" allowfullscreen></iframe>',
+      desc: 'A procedurally generated ecosystem simulation where animal AIs thrive using A* pathfinding and behavior trees. Each run generates a unique world.',
+      tags: ['Unity', 'C#', 'A* Pathfinding', 'Procedural Generation'],
+      link: 'https://github.com/sanjaysaji234/Eco'
+    },
+    frogo: {
+      title: 'Frogo Grabo',
+      media: '<iframe class="modal-video" src="https://itch.io/embed-upload/17098104?color=333333" allowfullscreen></iframe>',
+      desc: 'A fast-paced 2D pixel art endless side-scroller built for a two-week itch.io GameJam. Use the frog\'s tongue to grapple and eliminate enemies while dodging hazards.',
+      tags: ['Unity', 'WebGL', 'C#', 'GameJam'],
+      link: 'https://github.com/sanjaysaji234/FrogoGrabo'
+    }
+  };
+
+  function openModal(id) {
+    const p = projects[id];
+    document.getElementById('modal-title').textContent = p.title;
+    document.getElementById('modal-media').innerHTML = p.media;
+    document.getElementById('modal-desc').textContent = p.desc;
+    document.getElementById('modal-tags').innerHTML = p.tags.map(t =>
+      `<span class="tag tag-green">${t}</span>`).join('');
+    document.getElementById('modal-link').href = p.link;
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.getElementById('modal-media').innerHTML = '';
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
 </body>
 </html>
