@@ -8,254 +8,70 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #060810;
-      --card: #0d1117;
-      --card2: #111827;
-      --border: #1e293b;
-      --neon: #00ff88;
-      --neon2: #ff3b6b;
-      --neon3: #00d4ff;
-      --orange: #ff6b35;
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --pixel: 'Press Start 2P', monospace;
-      --orb: 'Orbitron', sans-serif;
-      --mono: 'Share Tech Mono', monospace;
+      --bg: #060810; --card: #0d1117; --card2: #111827; --border: #1e293b;
+      --neon: #00ff88; --neon2: #ff3b6b; --neon3: #00d4ff; --orange: #ff6b35;
+      --text: #e2e8f0; --muted: #64748b;
+      --pixel: 'Press Start 2P', monospace; --orb: 'Orbitron', sans-serif; --mono: 'Share Tech Mono', monospace;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--mono);
-      overflow-x: hidden;
-      cursor: none;
-    }
-
-    /* ── CUSTOM CURSOR ── */
-    .cursor {
-      position: fixed; top: 0; left: 0; width: 12px; height: 12px;
-      background: var(--neon); border-radius: 0;
-      pointer-events: none; z-index: 9999;
-      transition: transform 0.1s, background 0.2s;
-      mix-blend-mode: screen;
-    }
-    .cursor-ring {
-      position: fixed; top: 0; left: 0; width: 32px; height: 32px;
-      border: 1px solid var(--neon3); border-radius: 0;
-      pointer-events: none; z-index: 9998;
-      transition: transform 0.15s, border-color 0.2s;
-      mix-blend-mode: screen;
-    }
-
-    /* ── SCANLINES OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 9990; pointer-events: none;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,255,136,0.015) 2px,
-        rgba(0,255,136,0.015) 4px
-      );
-    }
-
-    /* ── NOISE TEXTURE ── */
-    body::after {
-      content: '';
-      position: fixed; inset: 0; z-index: 9989; pointer-events: none;
-      opacity: 0.04;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    }
-
-    /* ── GRID BACKGROUND ── */
-    .grid-bg {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-
-    /* ── LAYOUT ── */
+    body { background: var(--bg); color: var(--text); font-family: var(--mono); overflow-x: hidden; cursor: none; }
+    .cursor { position: fixed; top: 0; left: 0; width: 12px; height: 12px; background: var(--neon); border-radius: 0; pointer-events: none; z-index: 9999; mix-blend-mode: screen; }
+    .cursor-ring { position: fixed; top: 0; left: 0; width: 32px; height: 32px; border: 1px solid var(--neon3); border-radius: 0; pointer-events: none; z-index: 9998; transition: border-color 0.2s; mix-blend-mode: screen; }
+    body::before { content: ''; position: fixed; inset: 0; z-index: 9990; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.015) 2px, rgba(0,255,136,0.015) 4px); }
+    body::after { content: ''; position: fixed; inset: 0; z-index: 9989; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+    .grid-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px); background-size: 40px 40px; }
     .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 40px 20px 80px; }
-
-    /* ── BENTO GRID ── */
     .bento { display: grid; gap: 12px; }
-
-    .bento-top {
-      grid-template-columns: 220px 1fr 200px;
-      grid-template-rows: auto;
-    }
-
-    .bento-mid {
-      grid-template-columns: 1fr 1fr;
-      margin-top: 0;
-    }
-
-    .bento-proj {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .bento-bottom {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    /* ── CARDS ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 24px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, transform 0.3s;
-    }
+    .bento-top { grid-template-columns: 220px 1fr 200px; }
+    .bento-mid { grid-template-columns: 1fr 1fr; margin-top: 0; }
+    .bento-proj { grid-template-columns: repeat(2, 1fr); }
+    .bento-bottom { grid-template-columns: 1fr 1fr; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 24px; position: relative; overflow: hidden; transition: border-color 0.3s, transform 0.3s; }
     .card:hover { border-color: var(--neon); transform: translateY(-2px); }
-    .card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--neon), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--neon), transparent); opacity: 0; transition: opacity 0.3s; }
     .card:hover::before { opacity: 1; }
-
     .card-neon2::before { background: linear-gradient(90deg, transparent, var(--neon2), transparent); }
     .card-neon2:hover { border-color: var(--neon2); }
     .card-neon3::before { background: linear-gradient(90deg, transparent, var(--neon3), transparent); }
     .card-neon3:hover { border-color: var(--neon3); }
     .card-orange::before { background: linear-gradient(90deg, transparent, var(--orange), transparent); }
     .card-orange:hover { border-color: var(--orange); }
-
-    /* ── PROFILE CARD ── */
-    .profile-card {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 14px; text-align: center;
-      background: var(--card);
-    }
-    .avatar-wrap {
-      position: relative; width: 110px; height: 110px;
-    }
-    .avatar-wrap img {
-      width: 100%; height: 100%;
-      object-fit: cover; border-radius: 2px;
-      filter: grayscale(20%) contrast(1.1);
-      border: 2px solid var(--neon);
-    }
-    .avatar-corner {
-      position: absolute; width: 10px; height: 10px;
-      border-color: var(--neon2); border-style: solid;
-    }
+    .profile-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; }
+    .avatar-wrap { position: relative; width: 110px; height: 110px; }
+    .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; filter: grayscale(20%) contrast(1.1); border: 2px solid var(--neon); }
+    .avatar-corner { position: absolute; width: 10px; height: 10px; border-color: var(--neon2); border-style: solid; }
     .avatar-corner.tl { top: -4px; left: -4px; border-width: 2px 0 0 2px; }
     .avatar-corner.tr { top: -4px; right: -4px; border-width: 2px 2px 0 0; }
     .avatar-corner.bl { bottom: -4px; left: -4px; border-width: 0 0 2px 2px; }
     .avatar-corner.br { bottom: -4px; right: -4px; border-width: 0 2px 2px 0; }
-
-    .profile-name {
-      font-family: var(--orb);
-      font-size: 14px; font-weight: 900;
-      color: #fff; letter-spacing: 0.05em;
-    }
-    .profile-role {
-      font-family: var(--pixel);
-      font-size: 6px; color: var(--neon);
-      letter-spacing: 0.1em; line-height: 1.8;
-    }
-
-    /* ── TITLE CARD ── */
-    .title-card {
-      display: flex; flex-direction: column;
-      justify-content: center; padding: 28px 32px;
-      background: linear-gradient(135deg, var(--card) 0%, #0a0f1a 100%);
-    }
-    .title-eyebrow {
-      font-family: var(--pixel); font-size: 7px;
-      color: var(--neon3); letter-spacing: 0.15em;
-      margin-bottom: 10px;
-    }
-    .title-main {
-      font-family: var(--orb); font-size: clamp(26px, 3.5vw, 40px);
-      font-weight: 900; line-height: 1.1;
-      color: #fff; text-transform: uppercase;
-    }
+    .profile-name { font-family: var(--orb); font-size: 14px; font-weight: 900; color: #fff; letter-spacing: 0.05em; }
+    .profile-role { font-family: var(--pixel); font-size: 6px; color: var(--neon); letter-spacing: 0.1em; line-height: 1.8; }
+    .title-card { display: flex; flex-direction: column; justify-content: center; padding: 28px 32px; background: linear-gradient(135deg, var(--card) 0%, #0a0f1a 100%); }
+    .title-eyebrow { font-family: var(--pixel); font-size: 7px; color: var(--neon3); letter-spacing: 0.15em; margin-bottom: 10px; }
+    .title-main { font-family: var(--orb); font-size: clamp(26px, 3.5vw, 40px); font-weight: 900; line-height: 1.1; color: #fff; text-transform: uppercase; }
     .title-main span { color: var(--neon); }
-    .title-sub {
-      font-size: 13px; color: var(--muted);
-      margin-top: 10px; line-height: 1.6;
-    }
+    .title-sub { font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
     .title-cta { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-    .btn {
-      font-family: var(--pixel); font-size: 7px;
-      padding: 10px 16px; border-radius: 2px;
-      cursor: pointer; text-decoration: none;
-      transition: all 0.2s; display: inline-block;
-      letter-spacing: 0.05em;
-    }
+    .btn { font-family: var(--pixel); font-size: 7px; padding: 10px 16px; border-radius: 2px; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-block; letter-spacing: 0.05em; }
     .btn-primary { background: var(--neon); color: #000; border: none; }
     .btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon); }
     .btn-outline { background: transparent; color: var(--neon2); border: 1px solid var(--neon2); }
     .btn-outline:hover { background: var(--neon2); color: #fff; box-shadow: 0 0 20px var(--neon2); }
-
-    /* ── LINKS CARD ── */
     .links-card { display: flex; flex-direction: column; gap: 8px; }
-    .link-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 12px; border: 1px solid var(--border);
-      border-radius: 2px; text-decoration: none;
-      font-size: 11px; color: var(--muted);
-      transition: all 0.2s;
-    }
+    .link-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 2px; text-decoration: none; font-size: 11px; color: var(--muted); transition: all 0.2s; }
     .link-item:hover { border-color: var(--neon3); color: var(--neon3); background: rgba(0,212,255,0.05); }
     .link-item svg { flex-shrink: 0; }
-    .links-label {
-      font-family: var(--pixel); font-size: 7px;
-      color: var(--neon3); margin-bottom: 8px; display: block;
-    }
-
-    /* ── ABOUT CARD ── */
-    .about-card {
-      background: linear-gradient(135deg, #0d1117 0%, #0a1628 100%);
-      position: relative;
-    }
-    .about-tag {
-      font-family: var(--pixel); font-size: 7px;
-      color: var(--neon2); letter-spacing: 0.1em; margin-bottom: 12px;
-      display: block;
-    }
-    .about-headline {
-      font-family: var(--orb); font-size: clamp(22px, 3vw, 32px);
-      font-weight: 900; color: #fff; line-height: 1.1;
-      margin-bottom: 16px; text-transform: uppercase;
-    }
+    .links-label { font-family: var(--pixel); font-size: 7px; color: var(--neon3); margin-bottom: 8px; display: block; }
+    .about-card { background: linear-gradient(135deg, #0d1117 0%, #0a1628 100%); position: relative; }
+    .about-tag { font-family: var(--pixel); font-size: 7px; color: var(--neon2); letter-spacing: 0.1em; margin-bottom: 12px; display: block; }
+    .about-headline { font-family: var(--orb); font-size: clamp(22px, 3vw, 32px); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 16px; text-transform: uppercase; }
     .about-text { font-size: 13px; color: #94a3b8; line-height: 1.8; }
-    .about-mascot {
-      position: absolute; bottom: 20px; right: 20px;
-      font-size: 52px; opacity: 0.15;
-      animation: float 4s ease-in-out infinite;
-    }
-
-    /* ── SKILLS CARD ── */
-    .skills-tag-label {
-      font-family: var(--pixel); font-size: 7px;
-      color: var(--neon); display: block; margin-bottom: 12px;
-      letter-spacing: 0.1em;
-    }
-    .skills-heading {
-      font-family: var(--orb); font-size: 28px; font-weight: 900;
-      color: #fff; margin-bottom: 16px; text-transform: uppercase;
-    }
+    .about-mascot { position: absolute; bottom: 20px; right: 20px; font-size: 52px; opacity: 0.15; animation: float 4s ease-in-out infinite; }
+    .skills-tag-label { font-family: var(--pixel); font-size: 7px; color: var(--neon); display: block; margin-bottom: 12px; letter-spacing: 0.1em; }
+    .skills-heading { font-family: var(--orb); font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 16px; text-transform: uppercase; }
     .tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .tag {
-      padding: 6px 14px; border-radius: 2px; font-size: 11px;
-      font-family: var(--mono); letter-spacing: 0.05em;
-      border: 1px solid; cursor: default;
-      transition: all 0.2s;
-    }
+    .tag { padding: 6px 14px; border-radius: 2px; font-size: 11px; font-family: var(--mono); letter-spacing: 0.05em; border: 1px solid; cursor: default; transition: all 0.2s; }
     .tag:hover { transform: translateY(-2px); }
     .tag-green { color: var(--neon); border-color: rgba(0,255,136,0.4); background: rgba(0,255,136,0.05); }
     .tag-green:hover { background: rgba(0,255,136,0.15); box-shadow: 0 0 10px rgba(0,255,136,0.2); }
@@ -265,228 +81,94 @@
     .tag-blue:hover { background: rgba(0,212,255,0.15); }
     .tag-orange { color: var(--orange); border-color: rgba(255,107,53,0.4); background: rgba(255,107,53,0.05); }
     .tag-orange:hover { background: rgba(255,107,53,0.15); }
-
-    /* ── SECTION HEADING ── */
-    .section-heading {
-      font-family: var(--pixel); font-size: clamp(14px, 2.5vw, 22px);
-      color: #fff; padding: 20px 0 4px;
-      display: flex; align-items: center; gap: 14px;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    .section-heading::after {
-      content: ''; flex: 1; height: 1px;
-      background: linear-gradient(90deg, var(--neon), transparent);
-    }
-    .section-num {
-      font-family: var(--pixel); font-size: 10px; color: var(--neon); opacity: 0.5;
-    }
-
-    /* ── PROJECT CARD ── */
+    .section-heading { font-family: var(--pixel); font-size: clamp(14px, 2.5vw, 22px); color: #fff; padding: 20px 0 4px; display: flex; align-items: center; gap: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .section-heading::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--neon), transparent); }
+    .section-num { font-family: var(--pixel); font-size: 10px; color: var(--neon); opacity: 0.5; }
     .project-card { cursor: pointer; }
-    .proj-img {
-      width: 100%; height: 160px; object-fit: cover;
-      border-radius: 2px; margin-bottom: 14px;
-      filter: saturate(0.8) contrast(1.1);
-      transition: filter 0.3s, transform 0.3s;
-      display: block;
-    }
+    .proj-img { width: 100%; height: 160px; object-fit: cover; border-radius: 2px; margin-bottom: 14px; filter: saturate(0.8) contrast(1.1); transition: filter 0.3s; display: block; }
     .project-card:hover .proj-img { filter: saturate(1.2) contrast(1.1); }
-    .proj-title {
-      font-family: var(--orb); font-size: 16px; font-weight: 700;
-      color: #fff; margin-bottom: 6px;
-      transition: color 0.2s;
-    }
+    .proj-title { font-family: var(--orb); font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; transition: color 0.2s; }
     .project-card:hover .proj-title { color: var(--neon); }
     .proj-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
-    .proj-play {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-family: var(--pixel); font-size: 7px;
-      color: var(--neon2); letter-spacing: 0.05em;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
+    .proj-play { display: inline-flex; align-items: center; gap: 6px; font-family: var(--pixel); font-size: 7px; color: var(--neon2); letter-spacing: 0.05em; opacity: 0; transition: opacity 0.2s; }
     .project-card:hover .proj-play { opacity: 1; }
-
-    /* ── EXPERIENCE CARD ── */
-    .exp-logo {
-      font-family: var(--orb); font-size: 22px; font-weight: 900;
-      margin-bottom: 6px;
-    }
+    .exp-logo { font-family: var(--orb); font-size: 22px; font-weight: 900; margin-bottom: 6px; }
     .exp-role { font-family: var(--orb); font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
     .exp-company { font-size: 12px; color: var(--neon3); margin-bottom: 2px; }
     .exp-date { font-family: var(--pixel); font-size: 7px; color: var(--muted); margin-bottom: 12px; }
     .exp-list { padding-left: 0; list-style: none; }
-    .exp-list li {
-      font-size: 12px; color: #94a3b8; line-height: 1.6;
-      padding: 3px 0 3px 14px; position: relative;
-    }
+    .exp-list li { font-size: 12px; color: #94a3b8; line-height: 1.6; padding: 3px 0 3px 14px; position: relative; }
     .exp-list li::before { content: '▸'; position: absolute; left: 0; color: var(--neon); }
-
-    /* ── TOOLS CARD ── */
     .tools-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-
-    /* ── LANG BARS ── */
     .lang-item { margin-bottom: 16px; }
     .lang-name { font-family: var(--orb); font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
     .lang-label { font-family: var(--pixel); font-size: 7px; color: var(--muted); margin-bottom: 6px; display: block; }
     .lang-bar { height: 8px; background: var(--border); border-radius: 0; overflow: hidden; }
-    .lang-fill {
-      height: 100%; background: linear-gradient(90deg, var(--neon), var(--neon3));
-      border-radius: 0;
-      animation: fillBar 1.5s ease-out both;
-    }
-    @keyframes fillBar {
-      from { width: 0; }
-    }
+    .lang-fill { height: 100%; background: linear-gradient(90deg, var(--neon), var(--neon3)); animation: fillBar 1.5s ease-out both; }
+    @keyframes fillBar { from { width: 0; } }
 
     /* ── MODAL ── */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(6px); z-index: 1000;
-      display: flex; align-items: center; justify-content: center; padding: 20px;
-      opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal {
-      background: var(--card); border: 1px solid var(--neon);
-      border-radius: 4px; max-width: 800px; width: 100%;
-      max-height: 90vh; overflow-y: auto;
-      transform: scale(0.95) translateY(20px);
-      transition: transform 0.3s;
-      box-shadow: 0 0 60px rgba(0,255,136,0.15);
-    }
+    .modal { background: var(--card); border: 1px solid var(--neon); border-radius: 4px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; transform: scale(0.95) translateY(20px); transition: transform 0.3s; box-shadow: 0 0 60px rgba(0,255,136,0.15); }
     .modal-overlay.open .modal { transform: scale(1) translateY(0); }
-    .modal-header {
-      padding: 20px 24px; border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; background: var(--card); z-index: 10;
-    }
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 10; }
     .modal-title { font-family: var(--orb); font-size: 20px; font-weight: 700; color: #fff; }
-    .modal-close {
-      width: 32px; height: 32px; border: 1px solid var(--border);
-      background: none; color: var(--muted); font-size: 18px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s; border-radius: 2px;
-    }
+    .modal-close { width: 32px; height: 32px; border: 1px solid var(--border); background: none; color: var(--muted); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; border-radius: 2px; }
     .modal-close:hover { border-color: var(--neon2); color: var(--neon2); }
     .modal-body { padding: 24px; }
-    .modal-video { width: 100%;
-  height: auto; /* Changed from fixed aspect-ratio */
-  aspect-ratio: 980 / 640; /* Force the specific game ratio */
-  border: none;
-  border-radius: 2px;
-  margin-bottom: 20px; }
 
-    /* ── GLITCH EFFECT ── */
-    .glitch {
-      position: relative; display: inline-block;
+    /* ── STANDARD VIDEO EMBED (YouTube etc.) ── */
+    .modal-video { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 2px; margin-bottom: 20px; display: block; }
+
+    /* ── SCALED GAME EMBED (fixed-size itch.io) ──
+       Wrapper clips to the right height; iframe is scaled down via JS   */
+    .game-embed-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 2px;
+      margin-bottom: 20px;
+      background: #000;
     }
-    .glitch::before, .glitch::after {
-      content: attr(data-text);
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-    }
-    .glitch::before {
-      color: var(--neon2); left: 2px;
-      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-      animation: glitch1 3s infinite;
-    }
-    .glitch::after {
-      color: var(--neon3); left: -2px;
-      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-      animation: glitch2 3s infinite;
-    }
-    @keyframes glitch1 {
-      0%, 90%, 100% { transform: translate(0); opacity: 0; }
-      91% { transform: translate(3px, -1px); opacity: 0.8; }
-      93% { transform: translate(-2px, 1px); opacity: 0.8; }
-      95% { transform: translate(0); opacity: 0; }
-    }
-    @keyframes glitch2 {
-      0%, 92%, 100% { transform: translate(0); opacity: 0; }
-      93% { transform: translate(-3px, 1px); opacity: 0.8; }
-      95% { transform: translate(2px, -1px); opacity: 0.8; }
-      97% { transform: translate(0); opacity: 0; }
+    .game-embed-wrapper iframe {
+      display: block;
+      /* width/height set by data attrs; transform set by JS */
+      transform-origin: top left;
     }
 
-    /* ── FLOAT ── */
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    /* ── BLINK ── */
+    .glitch { position: relative; display: inline-block; }
+    .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .glitch::before { color: var(--neon2); left: 2px; clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%); animation: glitch1 3s infinite; }
+    .glitch::after { color: var(--neon3); left: -2px; clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%); animation: glitch2 3s infinite; }
+    @keyframes glitch1 { 0%,90%,100%{transform:translate(0);opacity:0}91%{transform:translate(3px,-1px);opacity:.8}93%{transform:translate(-2px,1px);opacity:.8}95%{transform:translate(0);opacity:0} }
+    @keyframes glitch2 { 0%,92%,100%{transform:translate(0);opacity:0}93%{transform:translate(-3px,1px);opacity:.8}95%{transform:translate(2px,-1px);opacity:.8}97%{transform:translate(0);opacity:0} }
+    @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
     .blink { animation: blink 1s step-end infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    /* ── FADE IN UP ── */
-    .fade-up {
-      opacity: 0; transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
+    @keyframes blink { 50%{opacity:0} }
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .fade-up.visible { opacity: 1; transform: translateY(0); }
-
-    /* ── TYPEWRITER ── */
-    .typewriter {
-      overflow: hidden; white-space: nowrap;
-      border-right: 2px solid var(--neon);
-      animation: typing 2.5s steps(30) 0.5s both, blink-cursor 0.75s step-end infinite 3s;
-    }
-    @keyframes typing { from { width: 0; } to { width: 100%; } }
-    @keyframes blink-cursor { 50% { border-color: transparent; } }
-
-    /* ── STAT BOXES ── */
+    .typewriter { overflow: hidden; white-space: nowrap; border-right: 2px solid var(--neon); animation: typing 2.5s steps(30) 0.5s both, blink-cursor 0.75s step-end infinite 3s; }
+    @keyframes typing { from{width:0} to{width:100%} }
+    @keyframes blink-cursor { 50%{border-color:transparent} }
     .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
     .stat-box { padding: 12px; border: 1px solid var(--border); text-align: center; border-radius: 2px; }
     .stat-num { font-family: var(--orb); font-size: 22px; font-weight: 900; color: var(--neon); }
     .stat-label { font-family: var(--pixel); font-size: 6px; color: var(--muted); margin-top: 4px; display: block; }
-
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; width: 100%; z-index: 500;
-      background: rgba(6,8,16,0.85); backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-inner {
-      max-width: 1100px; margin: 0 auto;
-      padding: 0 20px;
-      display: flex; justify-content: space-between; align-items: center;
-      height: 56px;
-    }
-    .nav-logo {
-      font-family: var(--pixel); font-size: 9px; color: var(--neon);
-      letter-spacing: 0.1em;
-    }
+    nav { position: fixed; top: 0; width: 100%; z-index: 500; background: rgba(6,8,16,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; height: 56px; }
+    .nav-logo { font-family: var(--pixel); font-size: 9px; color: var(--neon); letter-spacing: 0.1em; }
     .nav-links { display: flex; gap: 24px; }
-    .nav-links a {
-      font-family: var(--pixel); font-size: 7px;
-      color: var(--muted); text-decoration: none;
-      transition: color 0.2s; letter-spacing: 0.1em;
-    }
+    .nav-links a { font-family: var(--pixel); font-size: 7px; color: var(--muted); text-decoration: none; transition: color 0.2s; letter-spacing: 0.1em; }
     .nav-links a:hover { color: var(--neon); }
-    .nav-status {
-      display: flex; align-items: center; gap: 6px;
-      font-family: var(--pixel); font-size: 7px; color: var(--neon);
-    }
-    .status-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--neon); animation: pulse 2s ease infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.5); }
-      50% { box-shadow: 0 0 0 6px rgba(0,255,136,0); }
-    }
-
-    /* ── SCROLLBAR ── */
+    .nav-status { display: flex; align-items: center; gap: 6px; font-family: var(--pixel); font-size: 7px; color: var(--neon); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--neon); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,0.5)}50%{box-shadow:0 0 0 6px rgba(0,255,136,0)} }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--neon); }
-
-    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      .bento-top, .bento-mid, .bento-proj, .bento-bottom {
-        grid-template-columns: 1fr;
-      }
+      .bento-top, .bento-mid, .bento-proj, .bento-bottom { grid-template-columns: 1fr; }
       .stats { grid-template-columns: repeat(3, 1fr); }
       .nav-status { display: none; }
     }
@@ -498,7 +180,6 @@
 <div class="cursor-ring" id="cursorRing"></div>
 <div class="grid-bg"></div>
 
-<!-- NAV -->
 <nav>
   <div class="nav-inner">
     <span class="nav-logo">&gt; SS.EXE</span>
@@ -508,51 +189,38 @@
       <a href="#experience">EXP</a>
       <a href="#tools">TOOLS</a>
     </div>
-    <div class="nav-status">
-      <div class="status-dot"></div>
-      AVAILABLE
-    </div>
+    <div class="nav-status"><div class="status-dot"></div>AVAILABLE</div>
   </div>
 </nav>
 
 <div class="page" style="padding-top: 80px;">
 
-  <!-- TOP ROW -->
   <div class="bento bento-top fade-up" id="intro">
-
-    <!-- Profile -->
     <div class="card profile-card">
       <div class="avatar-wrap">
         <img src="./Images/IMG_2233.JPG.jpeg" alt="Sanjay Saji" />
-        <div class="avatar-corner tl"></div>
-        <div class="avatar-corner tr"></div>
-        <div class="avatar-corner bl"></div>
-        <div class="avatar-corner br"></div>
+        <div class="avatar-corner tl"></div><div class="avatar-corner tr"></div>
+        <div class="avatar-corner bl"></div><div class="avatar-corner br"></div>
       </div>
       <div class="profile-name">SANJAY SAJI</div>
       <div class="profile-role">GAME<br>PROGRAMMER<span class="blink">_</span></div>
-      <div class="stats" style="margin-top: 10px;">
+      <div class="stats" style="margin-top:10px;">
         <div class="stat-box"><div class="stat-num">4+</div><span class="stat-label">GAMES</span></div>
         <div class="stat-box"><div class="stat-num">2+</div><span class="stat-label">YEARS</span></div>
         <div class="stat-box"><div class="stat-num">C#</div><span class="stat-label">MAIN</span></div>
       </div>
     </div>
 
-    <!-- Title -->
     <div class="card title-card">
       <span class="title-eyebrow">// PLAYER ONE HAS ENTERED THE GAME</span>
-      <h1 class="title-main">
-        <span class="glitch" data-text="GAME">GAME</span><br>
-        PROGRAMMER
-      </h1>
-      <p class="title-sub typewriter">Engineering student. Unity & C# developer. Turning ideas into playable worlds.</p>
+      <h1 class="title-main"><span class="glitch" data-text="GAME">GAME</span><br>PROGRAMMER</h1>
+      <p class="title-sub typewriter">Engineering student. Unity &amp; C# developer. Turning ideas into playable worlds.</p>
       <div class="title-cta">
-        <a href="#projects" class="btn btn-primary">▶ VIEW PROJECTS</a>
-        <a href="./Resume.pdf" target="_blank" class="btn btn-outline">⬇ RESUME.PDF</a>
+        <a href="#projects" class="btn btn-primary">&#9654; VIEW PROJECTS</a>
+        <a href="./Resume.pdf" target="_blank" class="btn btn-outline">&#11015; RESUME.PDF</a>
       </div>
     </div>
 
-    <!-- Links -->
     <div class="card links-card card-neon3">
       <span class="links-label">// CONNECT</span>
       <a href="https://github.com/sanjaysaji234" target="_blank" class="link-item">
@@ -578,19 +246,13 @@
     </div>
   </div>
 
-  <!-- MID ROW: About + Skills -->
-  <div class="bento bento-mid" style="margin-top: 12px;">
-
+  <div class="bento bento-mid" style="margin-top:12px;">
     <div class="card about-card card-neon2 fade-up">
       <span class="about-tag">// PLAYER PROFILE</span>
       <h2 class="about-headline">HELLO<br>WORLD!</h2>
-      <p class="about-text">
-        I'm Sanjay — an engineering student and self-driven game programmer who builds playable experiences from scratch. I dive deep into <strong style="color:#fff">C# and Unity</strong>, crafting everything from procedural ecosystems to polished 2D/3D game mechanics.<br><br>
-        Passionate about AI systems, physics simulations, and making games that actually <em style="color: var(--neon)">feel</em> great to play. Let's build something unforgettable.
-      </p>
+      <p class="about-text">I'm Sanjay — an engineering student and self-driven game programmer who builds playable experiences from scratch. I dive deep into <strong style="color:#fff">C# and Unity</strong>, crafting everything from procedural ecosystems to polished 2D/3D game mechanics.<br><br>Passionate about AI systems, physics simulations, and making games that actually <em style="color:var(--neon)">feel</em> great to play. Let's build something unforgettable.</p>
       <div class="about-mascot">🎮</div>
     </div>
-
     <div class="card fade-up">
       <span class="skills-tag-label">// MY SUPER POWERS</span>
       <h2 class="skills-heading">SKILLS</h2>
@@ -601,122 +263,86 @@
         <span class="tag tag-orange">Mobile Dev</span>
         <span class="tag tag-blue">Blender</span>
       </div>
-
-      <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px;">
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
         <span class="skills-tag-label">// EDUCATION</span>
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size: 28px; opacity: 0.7;">🎓</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:28px;opacity:.7;">🎓</div>
           <div>
-            <div style="font-family: var(--orb); font-size: 13px; font-weight: 700; color: #fff;">B.E. Engineering</div>
-            <div style="font-size: 11px; color: var(--neon3); margin-top: 2px;">Currently Enrolled </div>
+            <div style="font-family:var(--orb);font-size:13px;font-weight:700;color:#fff;">B.E. Engineering</div>
+            <div style="font-size:11px;color:var(--neon3);margin-top:2px;">Currently Enrolled</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- PROJECTS -->
-  <div class="section-heading fade-up" id="projects">
-    <span class="section-num">02</span>
-    FEATURED PROJECTS
-  </div>
+  <div class="section-heading fade-up" id="projects"><span class="section-num">02</span>FEATURED PROJECTS</div>
 
-  <div class="bento bento-proj" style="margin-top: 8px;">
-
-
+  <div class="bento bento-proj" style="margin-top:8px;">
     <div class="card project-card card-neon2 fade-up" onclick="openModal('HookLine')">
       <img class="proj-img" src="./Images/Gemini_Generated_Image_s12qejs12qejs12q.png" alt="Hook Line" />
       <div class="proj-title">Hook Line</div>
       <p class="proj-desc">A polished 3D fishing simulation built in Unity, featuring physics-based gameplay, a robust state machine, and persistent data systems.</p>
-      <div class="tags" style="margin-bottom: 12px;">
-        <span class="tag tag-green">Unity</span>
-        <span class="tag tag-blue">C#</span>
-        <span class="tag tag-orange">WebGL</span>
-      </div>
-      <span class="proj-play">▶ Play DEMO</span>
+      <div class="tags" style="margin-bottom:12px;"><span class="tag tag-green">Unity</span><span class="tag tag-blue">C#</span><span class="tag tag-orange">WebGL</span></div>
+      <span class="proj-play">&#9654; PLAY DEMO</span>
     </div>
-
     <div class="card project-card card-neon2 fade-up" onclick="openModal('protoboat')">
       <img class="proj-img" src="./Images/Screenshot 2025-10-26 151335.png" alt="ProtoBoat" />
       <div class="proj-title">ProtoBoat</div>
       <p class="proj-desc">An endless runner mobile game — dodge obstacles, navigate dynamic environments, survive as long as you can.</p>
-      <div class="tags" style="margin-bottom: 12px;">
-        <span class="tag tag-green">Unity</span>
-        <span class="tag tag-blue">C#</span>
-        <span class="tag tag-orange">Mobile</span>
-      </div>
-      <span class="proj-play">▶ WATCH DEMO</span>
+      <div class="tags" style="margin-bottom:12px;"><span class="tag tag-green">Unity</span><span class="tag tag-blue">C#</span><span class="tag tag-orange">Mobile</span></div>
+      <span class="proj-play">&#9654; WATCH DEMO</span>
     </div>
-
     <div class="card project-card card-neon3 fade-up" onclick="openModal('fantasy')">
       <img class="proj-img" src="./Images/Screenshot 2026-03-29 222347.png" alt="Fantasy Game Demo" />
       <div class="proj-title">Fantasy Game Demo</div>
       <p class="proj-desc">A 2.5D side-scroller with real-time combat, puzzle mechanics, and hand-crafted AI enemies.</p>
-      <div class="tags" style="margin-bottom: 12px;">
-        <span class="tag tag-green">Unity</span>
-        <span class="tag tag-blue">AI Systems</span>
-        <span class="tag tag-pink">Blender</span>
-      </div>
-      <span class="proj-play">▶ WATCH DEMO</span>
+      <div class="tags" style="margin-bottom:12px;"><span class="tag tag-green">Unity</span><span class="tag tag-blue">AI Systems</span><span class="tag tag-pink">Blender</span></div>
+      <span class="proj-play">&#9654; WATCH DEMO</span>
     </div>
-
     <div class="card project-card card-orange fade-up" onclick="openModal('ecosystem')">
       <img class="proj-img" src="./Images/Screenshot 2026-03-23 221950.png" alt="Ecosystem" />
       <div class="proj-title">Ecosystem Sim</div>
       <p class="proj-desc">Procedurally generated world where animal AIs survive using A* pathfinding and behavior trees.</p>
-      <div class="tags" style="margin-bottom: 12px;">
-        <span class="tag tag-green">Unity</span>
-        <span class="tag tag-blue">A* Pathfinding</span>
-        <span class="tag tag-pink">Proc Gen</span>
-      </div>
-      <span class="proj-play">▶ WATCH DEMO</span>
+      <div class="tags" style="margin-bottom:12px;"><span class="tag tag-green">Unity</span><span class="tag tag-blue">A* Pathfinding</span><span class="tag tag-pink">Proc Gen</span></div>
+      <span class="proj-play">&#9654; WATCH DEMO</span>
     </div>
-
     <div class="card project-card fade-up" onclick="openModal('frogo')">
       <img class="proj-img" src="./Images/Gemini_Generated_Image_69rtl069rtl069rt.png" alt="Frogo Grabo" />
       <div class="proj-title">Frogo Grabo</div>
       <p class="proj-desc">2D pixel endless runner built for a GameJam. Grapple enemies with a frog tongue across hazardous terrain.</p>
-      <div class="tags" style="margin-bottom: 12px;">
-        <span class="tag tag-green">Unity</span>
-        <span class="tag tag-blue">WebGL</span>
-        <span class="tag tag-orange">GameJam</span>
-      </div>
-      <span class="proj-play">▶ PLAY NOW</span>
+      <div class="tags" style="margin-bottom:12px;"><span class="tag tag-green">Unity</span><span class="tag tag-blue">WebGL</span><span class="tag tag-orange">GameJam</span></div>
+      <span class="proj-play">&#9654; PLAY NOW</span>
     </div>
   </div>
 
-  <!-- EXPERIENCE -->
-  <div class="section-heading fade-up" id="experience">
-    <span class="section-num">03</span>
-    GAME DEV JOURNEY
-  </div>
-
-  <div class="bento" style="grid-template-columns: repeat(3,1fr); margin-top: 8px;">
+  <div class="section-heading fade-up" id="experience"><span class="section-num">03</span>GAME DEV JOURNEY</div>
+  <div class="bento" style="grid-template-columns:repeat(3,1fr);margin-top:8px;">
     <div class="card card-neon2 fade-up">
-      <div class="exp-logo" style="color: var(--neon2);">✦</div>
+      <div class="exp-logo" style="color:var(--neon2);">✦</div>
       <div class="exp-role">Solo Developer</div>
       <div class="exp-company">Personal Projects</div>
       <div class="exp-date">2023 / PRESENT</div>
       <ul class="exp-list">
-        <li>Designed & shipped 4 complete game prototypes</li>
+        <li>Designed &amp; shipped 4 complete game prototypes</li>
         <li>Published on Itch.io with live WebGL builds</li>
         <li>Self-taught advanced Unity systems (AI, physics, shaders)</li>
         <li>Competed in game jams under time pressure</li>
       </ul>
     </div>
     <div class="card card-neon3 fade-up">
-      <div class="exp-logo" style="color: var(--neon3);">⚡</div>
+      <div class="exp-logo" style="color:var(--neon3);">⚡</div>
       <div class="exp-role">Engineering Student</div>
       <div class="exp-company">GGSIPU</div>
-      <div class="exp-date">2024 -2028</div>
+      <div class="exp-date">2024 – 2028</div>
       <ul class="exp-list">
-        <li>Strong foundation in algorithms & data structures</li>
+        <li>Strong foundation in algorithms &amp; data structures</li>
         <li>Built procedural generation systems for hackathon</li>
         <li>Collaborated on team software projects</li>
       </ul>
     </div>
     <div class="card card-orange fade-up">
-      <div class="exp-logo" style="color: var(--orange);">🎮</div>
+      <div class="exp-logo" style="color:var(--orange);">🎮</div>
       <div class="exp-role">Game Jam Participant</div>
       <div class="exp-company">Itch.io GameJams</div>
       <div class="exp-date">2026</div>
@@ -724,27 +350,19 @@
         <li>Frogo Grabo shipped in 2 weeks</li>
         <li>Full game loop design under constraints</li>
         <li>Optimized for WebGL browser play</li>
-        <li>Community feedback & iteration cycles</li>
+        <li>Community feedback &amp; iteration cycles</li>
       </ul>
     </div>
   </div>
 
-  <!-- TOOLS + LANGUAGES -->
-  <div class="section-heading fade-up" id="tools">
-    <span class="section-num">04</span>
-    TOOLKIT
-  </div>
-
-  <div class="bento bento-bottom" style="margin-top: 8px;">
+  <div class="section-heading fade-up" id="tools"><span class="section-num">04</span>TOOLKIT</div>
+  <div class="bento bento-bottom" style="margin-top:8px;">
     <div class="card fade-up">
       <span class="skills-tag-label">// SOFTWARES &amp; ENGINES</span>
       <div class="tools-grid">
-        <span class="tag tag-green">Unity</span>
-        <span class="tag tag-blue">Visual Studio</span>
-        <span class="tag tag-pink">Blender</span>
-        <span class="tag tag-orange">Git / GitHub</span>
-        <span class="tag tag-blue">VS Code</span>
-        <span class="tag tag-green">Audacity</span>
+        <span class="tag tag-green">Unity</span><span class="tag tag-blue">Visual Studio</span>
+        <span class="tag tag-pink">Blender</span><span class="tag tag-orange">Git / GitHub</span>
+        <span class="tag tag-blue">VS Code</span><span class="tag tag-green">Audacity</span>
       </div>
     </div>
     <div class="card card-neon3 fade-up">
@@ -752,27 +370,23 @@
       <div class="lang-item">
         <div class="lang-name">C#</div>
         <span class="lang-label">PRIMARY LANGUAGE</span>
-        <div class="lang-bar"><div class="lang-fill" style="width: 90%"></div></div>
+        <div class="lang-bar"><div class="lang-fill" style="width:90%"></div></div>
       </div>
       <div class="lang-item">
         <div class="lang-name">C++</div>
         <span class="lang-label">INTERMEDIATE</span>
-        <div class="lang-bar"><div class="lang-fill" style="width: 65%; animation-delay: 0.2s"></div></div>
+        <div class="lang-bar"><div class="lang-fill" style="width:65%;animation-delay:.2s"></div></div>
       </div>
-   
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer style="text-align:center; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border);">
-    <p style="font-family: var(--pixel); font-size: 8px; color: var(--muted); letter-spacing: 0.1em;">
+  <footer style="text-align:center;margin-top:60px;padding-top:24px;border-top:1px solid var(--border);">
+    <p style="font-family:var(--pixel);font-size:8px;color:var(--muted);letter-spacing:.1em;">
       © 2026 SANJAY SAJI · GAME PROGRAMMER · BUILT WITH &lt;3 &amp; C#<span class="blink">_</span>
     </p>
   </footer>
-
 </div>
 
-<!-- MODALS -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -781,98 +395,138 @@
     </div>
     <div class="modal-body">
       <div id="modal-media"></div>
-      <p id="modal-desc" style="font-size: 13px; color: #94a3b8; line-height: 1.8; margin-bottom: 16px;"></p>
-      <div id="modal-tags" class="tags" style="margin-bottom: 16px;"></div>
-      <a id="modal-link" href="#" target="_blank" class="btn btn-outline" style="font-size: 7px;">⬡ VIEW ON GITHUB</a>
+      <p id="modal-desc" style="font-size:13px;color:#94a3b8;line-height:1.8;margin-bottom:16px;"></p>
+      <div id="modal-tags" class="tags" style="margin-bottom:16px;"></div>
+      <a id="modal-link" href="#" target="_blank" class="btn btn-outline" style="font-size:7px;">&#x2B21; VIEW ON GITHUB</a>
     </div>
   </div>
 </div>
 
 <script>
-  // Cursor
+  // ── CURSOR ──
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  function animCursor() {
-    cursor.style.transform = `translate(${mx-6}px, ${my-6}px)`;
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.transform = `translate(${rx-16}px, ${ry-16}px)`;
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function animCursor() {
+    cursor.style.transform = `translate(${mx-6}px,${my-6}px)`;
+    rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+    ring.style.transform = `translate(${rx-16}px,${ry-16}px)`;
     requestAnimationFrame(animCursor);
-  }
-  animCursor();
-  document.querySelectorAll('a, button, .project-card, .tag').forEach(el => {
-    el.addEventListener('mouseenter', () => { cursor.style.transform += ' scale(2)'; ring.style.borderColor = '#ff3b6b'; });
-    el.addEventListener('mouseleave', () => { ring.style.borderColor = '#00d4ff'; });
+  })();
+  document.querySelectorAll('a,button,.project-card,.tag').forEach(el => {
+    el.addEventListener('mouseenter', () => { ring.style.borderColor='#ff3b6b'; });
+    el.addEventListener('mouseleave', () => { ring.style.borderColor='#00d4ff'; });
   });
 
-  // Scroll animations
+  // ── SCROLL ANIMATIONS ──
   const obs = new IntersectionObserver(entries => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-      }
-    });
+    entries.forEach((e,i) => { if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'), i*80); });
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
 
-  // Projects data
+  // ── PROJECTS DATA ──
+  // gameEmbed: true  →  uses scaled wrapper (980×640 itch.io games)
+  // gameEmbed: false →  uses standard 16:9 iframe (YouTube etc.)
   const projects = {
     HookLine: {
       title: 'Hook Line',
-      media: '<iframe class="modal-video" src="https://itch.io/embed-upload/17239804?color=333333" width="980" height="640" allowfullscreen></iframe>',
+      src: 'https://itch.io/embed-upload/17239804?color=333333',
+      gameEmbed: true, embedW: 980, embedH: 640,
       desc: 'A polished 3D fishing simulation built in Unity, featuring physics-based gameplay, a robust state machine, and persistent data systems.',
-      tags: ['Unity', 'C#', 'Blender']
+      tags: ['Unity', 'C#', 'Blender', 'WebGL'],
+      link: 'https://s-njay.itch.io/'
     },
-
     protoboat: {
       title: 'ProtoBoat',
-      media: '<iframe class="modal-video" src="https://www.youtube.com/embed/SnNk1iygLjM" allowfullscreen></iframe>',
-      desc: 'An endless runner mobile game that challenges players to dodge obstacles while navigating through dynamic environments. Built with mobile performance optimization in mind.',
+      src: 'https://www.youtube.com/embed/SnNk1iygLjM',
+      gameEmbed: false,
+      desc: 'An endless runner mobile game that challenges players to dodge obstacles while navigating through dynamic environments.',
       tags: ['Unity', 'C#', 'Mobile Optimization'],
       link: 'https://github.com/sanjaysaji234/protobot3d'
     },
     fantasy: {
       title: 'Fantasy Game Demo',
-      media: '<iframe class="modal-video" src="https://www.youtube.com/embed/WAqVa_OvOJM" allowfullscreen></iframe>',
+      src: 'https://www.youtube.com/embed/WAqVa_OvOJM',
+      gameEmbed: false,
       desc: 'A 2.5D side-scroller adventure combining platforming mechanics, puzzle-solving, and real-time combat with custom AI enemy behavior systems.',
       tags: ['Unity', 'C#', 'AI Systems', 'Blender'],
       link: 'https://github.com/sanjaysaji234/Fantasy'
     },
     ecosystem: {
       title: 'Ecosystem Simulation',
-      media: '<iframe class="modal-video" src="https://www.youtube.com/embed/Lpu6d_93vY0" allowfullscreen></iframe>',
-      desc: 'A procedurally generated ecosystem simulation where animal AIs thrive using A* pathfinding and behavior trees. Each run generates a unique world.',
+      src: 'https://www.youtube.com/embed/Lpu6d_93vY0',
+      gameEmbed: false,
+      desc: 'A procedurally generated ecosystem simulation where animal AIs thrive using A* pathfinding and behavior trees.',
       tags: ['Unity', 'C#', 'A* Pathfinding', 'Procedural Generation'],
       link: 'https://github.com/sanjaysaji234/Eco'
     },
     frogo: {
       title: 'Frogo Grabo',
-      media: '<iframe class="modal-video" src="https://itch.io/embed-upload/17098104?color=333333" allowfullscreen></iframe>',
-      desc: 'A fast-paced 2D pixel art endless side-scroller built for a two-week itch.io GameJam. Use the frog\'s tongue to grapple and eliminate enemies while dodging hazards.',
+      src: 'https://itch.io/embed-upload/17098104?color=333333',
+      gameEmbed: true, embedW: 980, embedH: 640,
+      desc: "A fast-paced 2D pixel art endless side-scroller built for a two-week itch.io GameJam. Use the frog's tongue to grapple and eliminate enemies while dodging hazards.",
       tags: ['Unity', 'WebGL', 'C#', 'GameJam'],
       link: 'https://github.com/sanjaysaji234/FrogoGrabo'
     }
   };
 
+  // ── SCALE GAME EMBEDS ──
+  // Measures the wrapper width and scales the fixed-size iframe to fit exactly.
+  function scaleGameEmbed() {
+    const wrapper = document.querySelector('.game-embed-wrapper');
+    if (!wrapper) return;
+    const iframe = wrapper.querySelector('iframe');
+    if (!iframe) return;
+    const W = parseInt(iframe.getAttribute('data-w'));
+    const H = parseInt(iframe.getAttribute('data-h'));
+    const availW = wrapper.clientWidth;
+    const scale = availW / W;
+    iframe.style.width  = W + 'px';
+    iframe.style.height = H + 'px';
+    iframe.style.transform = `scale(${scale})`;
+    wrapper.style.height = (H * scale) + 'px';
+  }
+  window.addEventListener('resize', scaleGameEmbed);
+
+  // ── OPEN / CLOSE MODAL ──
   function openModal(id) {
     const p = projects[id];
+    if (!p) return;
     document.getElementById('modal-title').textContent = p.title;
-    document.getElementById('modal-media').innerHTML = p.media;
+
+    let mediaHTML = '';
+    if (p.gameEmbed) {
+      // Scaled wrapper — iframe dimensions set via data attrs, JS handles transform
+      mediaHTML = `
+        <div class="game-embed-wrapper">
+          <iframe
+            src="${p.src}"
+            data-w="${p.embedW}" data-h="${p.embedH}"
+            frameborder="0" allowfullscreen>
+          </iframe>
+        </div>`;
+    } else {
+      mediaHTML = `<iframe class="modal-video" src="${p.src}" frameborder="0" allowfullscreen></iframe>`;
+    }
+
+    document.getElementById('modal-media').innerHTML = mediaHTML;
     document.getElementById('modal-desc').textContent = p.desc;
-    document.getElementById('modal-tags').innerHTML = p.tags.map(t =>
-      `<span class="tag tag-green">${t}</span>`).join('');
-    document.getElementById('modal-link').href = p.link;
+    document.getElementById('modal-tags').innerHTML = p.tags.map(t=>`<span class="tag tag-green">${t}</span>`).join('');
+    document.getElementById('modal-link').href = p.link || '#';
     document.getElementById('modal-overlay').classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Scale after the DOM is painted
+    requestAnimationFrame(() => requestAnimationFrame(scaleGameEmbed));
   }
+
   function closeModal() {
     document.getElementById('modal-overlay').classList.remove('open');
     document.getElementById('modal-media').innerHTML = '';
     document.body.style.overflow = '';
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
 </script>
 </body>
 </html>
