@@ -27,6 +27,7 @@
     .bento-mid { grid-template-columns: 1fr 1fr; margin-top: 0; }
     .bento-proj { grid-template-columns: repeat(2, 1fr); }
     .bento-bottom { grid-template-columns: 1fr 1fr; }
+    .bento-exp { grid-template-columns: repeat(3, 1fr); }
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 24px; position: relative; overflow: hidden; transition: border-color 0.3s, transform 0.3s; }
     .card:hover { border-color: var(--neon); transform: translateY(-2px); }
     .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--neon), transparent); opacity: 0; transition: opacity 0.3s; }
@@ -100,6 +101,22 @@
     .exp-list li { font-size: 12px; color: #94a3b8; line-height: 1.6; padding: 3px 0 3px 14px; position: relative; }
     .exp-list li::before { content: '▸'; position: absolute; left: 0; color: var(--neon); }
     .tools-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+    /* ── INTERNSHIP CARD + CERTIFICATE SLOT ── */
+    .intern-card { display: grid; grid-template-columns: 1fr 300px; gap: 28px; align-items: center; margin-bottom: 12px; background: linear-gradient(135deg, #0d1117 0%, #0a1628 100%); }
+    .intern-badge { display: inline-block; font-family: var(--pixel); font-size: 7px; color: #000; background: var(--neon); padding: 5px 9px; margin-bottom: 14px; letter-spacing: 0.08em; }
+    .intern-card .exp-role { font-size: 20px; }
+    .intern-card .exp-company { font-size: 14px; margin-bottom: 4px; }
+    .cert-slot { position: relative; width: 100%; aspect-ratio: 1.414 / 1; border: 1px dashed var(--neon3); border-radius: 2px; background: repeating-linear-gradient(45deg, rgba(0,212,255,0.04) 0 10px, transparent 10px 20px); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .cert-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+    .cert-placeholder { text-align: center; padding: 16px; }
+    .cert-placeholder .cert-icon { font-size: 28px; opacity: .6; margin-bottom: 10px; }
+    .cert-placeholder .cert-title { font-family: var(--pixel); font-size: 8px; color: var(--neon3); letter-spacing: 0.1em; line-height: 1.8; }
+    .cert-placeholder .cert-hint { font-size: 10px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+    .cert-slot.has-img { border-style: solid; border-color: var(--neon); cursor: pointer; }
+    .cert-slot.has-img .cert-placeholder { display: none; }
+    .cert-slot .cert-zoom { display: none; position: absolute; right: 8px; bottom: 8px; font-family: var(--pixel); font-size: 6px; color: #000; background: var(--neon); padding: 5px 7px; z-index: 2; }
+    .cert-slot.has-img .cert-zoom { display: block; }
     .lang-item { margin-bottom: 16px; }
     .lang-name { font-family: var(--orb); font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
     .lang-label { font-family: var(--pixel); font-size: 7px; color: var(--muted); margin-bottom: 6px; display: block; }
@@ -168,9 +185,10 @@
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--neon); }
     @media (max-width: 768px) {
-      .bento-top, .bento-mid, .bento-proj, .bento-bottom { grid-template-columns: 1fr; }
+      .bento-top, .bento-mid, .bento-proj, .bento-bottom, .bento-exp { grid-template-columns: 1fr; }
       .stats { grid-template-columns: repeat(3, 1fr); }
       .nav-status { display: none; }
+      .intern-card { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -279,6 +297,13 @@
   <div class="section-heading fade-up" id="projects"><span class="section-num">02</span>FEATURED PROJECTS</div>
 
   <div class="bento bento-proj" style="margin-top:8px;">
+    <div class="card project-card card-neon2 fade-up" onclick="openModal('haunt')">
+      <img class="proj-img" src="https://img.youtube.com/vi/BM9tgtm29iw/hqdefault.jpg" alt="Haunt" />
+      <div class="proj-title">Haunt</div>
+      <p class="proj-desc">Co-op horror where your pet gets possessed. Set traps and coordinate with friends as a family to defeat the enemy.</p>
+      <div class="tags" style="margin-bottom:12px;"><span class="tag tag-green">Unity</span><span class="tag tag-blue">C#</span><span class="tag tag-pink">Co-op</span><span class="tag tag-orange">Horror</span></div>
+      <span class="proj-play">&#9654; WATCH DEMO</span>
+    </div>
     <div class="card project-card card-neon2 fade-up" onclick="openModal('HookLine')">
       <img class="proj-img" src="./Images/Gemini_Generated_Image_s12qejs12qejs12q.png" alt="Hook Line" />
       <div class="proj-title">Hook Line</div>
@@ -322,7 +347,36 @@
   </div>
 
   <div class="section-heading fade-up" id="experience"><span class="section-num">03</span>GAME DEV JOURNEY</div>
-  <div class="bento" style="grid-template-columns:repeat(3,1fr);margin-top:8px;">
+  <div class="bento" style="margin-top:8px;">
+    <div class="card intern-card fade-up">
+      <div>
+        <span class="intern-badge">&#9733; INTERNSHIP</span>
+        <div class="exp-role">Junior Game Programmer Intern</div>
+        <div class="exp-company">Sector4 Interactive</div>
+        <div class="exp-date">3 MONTHS</div>
+        <ul class="exp-list">
+          <li>Built and iterated on gameplay features in Unity &amp; C# alongside a professional game team</li>
+          <li>Worked with designers and senior programmers, using Git for version control and collaboration</li>
+          <li>Debugged issues and contributed to performance improvements across game builds</li>
+        </ul>
+        <div class="tags" style="margin-top:14px;">
+          <span class="tag tag-green">Unity</span><span class="tag tag-blue">C#</span><span class="tag tag-orange">Git / GitHub</span>
+        </div>
+      </div>
+      <!-- CERTIFICATE SLOT: save your certificate as Images/sector4-certificate.jpg (.png / .jpeg / .webp also work) -->
+      <div class="cert-slot" id="cert-slot" title="Internship certificate">
+        <img id="cert-img" alt="Sector4 Interactive internship certificate" style="display:none;" />
+        <div class="cert-placeholder">
+          <div class="cert-icon">&#127941;</div>
+          <div class="cert-title">CERTIFICATE<br>SLOT</div>
+          <div class="cert-hint">Add your image at<br>Images/sector4-certificate.jpg</div>
+        </div>
+        <span class="cert-zoom">&#128269; CLICK TO VIEW</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bento bento-exp" style="margin-top:0;">
     <div class="card card-neon2 fade-up">
       <div class="exp-logo" style="color:var(--neon2);">✦</div>
       <div class="exp-role">Solo Developer</div>
@@ -363,11 +417,36 @@
   <div class="section-heading fade-up" id="tools"><span class="section-num">04</span>TOOLKIT</div>
   <div class="bento bento-bottom" style="margin-top:8px;">
     <div class="card fade-up">
-      <span class="skills-tag-label">// SOFTWARES &amp; ENGINES</span>
-      <div class="tools-grid">
-        <span class="tag tag-green">Unity</span><span class="tag tag-blue">Visual Studio</span>
-        <span class="tag tag-pink">Blender</span><span class="tag tag-orange">Git / GitHub</span>
-        <span class="tag tag-blue">VS Code</span><span class="tag tag-green">Audacity</span>
+      <span class="skills-tag-label">// SOFTWARES &amp; ENGINES / PROFICIENCY</span>
+      <div class="lang-item">
+        <div class="lang-name">Unity</div>
+        <span class="lang-label">EXPERT</span>
+        <div class="lang-bar"><div class="lang-fill" style="width:90%"></div></div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Blender</div>
+        <span class="lang-label">INTERMEDIATE</span>
+        <div class="lang-bar"><div class="lang-fill" style="width:60%;animation-delay:.1s"></div></div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Audacity</div>
+        <span class="lang-label">BEGINNER</span>
+        <div class="lang-bar"><div class="lang-fill" style="width:30%;animation-delay:.2s"></div></div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Git / GitHub</div>
+        <span class="lang-label">BEGINNER</span>
+        <div class="lang-bar"><div class="lang-fill" style="width:30%;animation-delay:.3s"></div></div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">Visual Studio</div>
+        <span class="lang-label">INTERMEDIATE</span>
+        <div class="lang-bar"><div class="lang-fill" style="width:70%;animation-delay:.4s"></div></div>
+      </div>
+      <div class="lang-item">
+        <div class="lang-name">VS Code</div>
+        <span class="lang-label">INTERMEDIATE</span>
+        <div class="lang-bar"><div class="lang-fill" style="width:75%;animation-delay:.5s"></div></div>
       </div>
     </div>
     <div class="card card-neon3 fade-up">
@@ -379,8 +458,8 @@
       </div>
       <div class="lang-item">
         <div class="lang-name">C++</div>
-        <span class="lang-label">INTERMEDIATE</span>
-        <div class="lang-bar"><div class="lang-fill" style="width:65%;animation-delay:.2s"></div></div>
+        <span class="lang-label">BEGINNER</span>
+        <div class="lang-bar"><div class="lang-fill" style="width:30%;animation-delay:.2s"></div></div>
       </div>
     </div>
   </div>
@@ -434,6 +513,21 @@
   // gameEmbed: true  →  uses scaled wrapper (980×640 itch.io games)
   // gameEmbed: false →  uses standard 16:9 iframe (YouTube etc.)
   const projects = {
+    haunt: {
+      title: 'Haunt',
+      src: 'https://www.youtube.com/embed/BM9tgtm29iw',
+      gameEmbed: false,
+      desc: 'A co-op horror game where your pet has been possessed. Play as members of the family, set traps, and coordinate with your friends to defeat the enemy.',
+      tags: ['Unity', 'C#', 'Co-op', 'Horror'],
+      link: ''
+    },
+    certificate: {
+      title: 'Internship Certificate',
+      image: true, src: '',
+      desc: 'Junior Game Programmer Intern, Sector4 Interactive (3 months).',
+      tags: ['Internship', 'Sector4 Interactive'],
+      link: ''
+    },
     HookLine: {
       title: 'Hook Line',
       src: 'https://itch.io/embed-upload/17239804?color=333333',
@@ -494,6 +588,23 @@
   }
   window.addEventListener('resize', scaleGameEmbed);
 
+  // ── CERTIFICATE SLOT ──
+  // Looks for Images/sector4-certificate.{jpg,jpeg,png,webp}; shows placeholder until one exists.
+  (function loadCertificate() {
+    const slot = document.getElementById('cert-slot');
+    const img = document.getElementById('cert-img');
+    const candidates = ['jpg', 'jpeg', 'png', 'webp'].map(e => `./Images/sector4-certificate.${e}`);
+    let i = 0;
+    img.onload = () => {
+      img.style.display = 'block';
+      slot.classList.add('has-img');
+      projects.certificate.src = img.src;
+      slot.onclick = () => openModal('certificate');
+    };
+    img.onerror = () => { if (++i < candidates.length) img.src = candidates[i]; };
+    img.src = candidates[0];
+  })();
+
   // ── OPEN / CLOSE MODAL ──
   function openModal(id) {
     const p = projects[id];
@@ -501,7 +612,9 @@
     document.getElementById('modal-title').textContent = p.title;
 
     let mediaHTML = '';
-    if (p.gameEmbed) {
+    if (p.image) {
+      mediaHTML = `<img class="modal-video" style="aspect-ratio:auto;height:auto;object-fit:contain;" src="${p.src}" alt="${p.title}" />`;
+    } else if (p.gameEmbed) {
       // Scaled wrapper — iframe dimensions set via data attrs, JS handles transform
       mediaHTML = `
         <div class="game-embed-wrapper">
@@ -518,7 +631,9 @@
     document.getElementById('modal-media').innerHTML = mediaHTML;
     document.getElementById('modal-desc').textContent = p.desc;
     document.getElementById('modal-tags').innerHTML = p.tags.map(t=>`<span class="tag tag-green">${t}</span>`).join('');
-    document.getElementById('modal-link').href = p.link || '#';
+    const modalLink = document.getElementById('modal-link');
+    modalLink.href = p.link || '#';
+    modalLink.style.display = p.link ? '' : 'none';   // no GitHub link -> hide the button
     document.getElementById('modal-overlay').classList.add('open');
     document.body.style.overflow = 'hidden';
 
